@@ -1,0 +1,11 @@
+.idea/
+.~lock.k_PricesMarkets_v1.xlsx#
+.~lock.test(1).xlsx#
+__pycache__/
+ecir_annotated_files.zip
+ecir_annotated_files/
+k_PricesMarkets_v1.xlsx
+relevant_papers/
+sqlite.db
+test(1).xlsx
+venv

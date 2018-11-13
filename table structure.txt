@@ -1,0 +1,60 @@
+aka_name  	id, person_id, name, imdb_index, name_pcode_cf, name_pcode_nf, surname_pcode, md5sum,
+		(1, 6226527, 'Smith, Jessica Noel', None, 'S5325', 'J2542', 'S53', '25c9d464e3ff2957533546aa92b397ed')
+
+aka_title  	id, movie_id, title, imdb_index, kind_id, production_year, phonetic_code, episode_of_id, season_nr, episode_nr, note, md5sum,
+		(39158, 2345330, 'What Do You Do?', None, 2, 2017, 'W3531', None, None, None, '(International: English title)', '5...b3ad'),
+
+cast_info  	id, person_id, movie_id, person_role_id, note, nr_order, role_id,
+		(1, 1, 3515592, 1, None, 31, 1),
+
+company_name  	id, name, country_code, imdb_id, name_pcode_nf, name_pcode_sf, md5sum,
+		(54158, 'VIKTORIA FILMS', '[lt]', None, 'V2361', 'V2361', '6b8f445905721fd9cdb3d82c929d2839'),
+
+char_name  	id, name, imdb_index, imdb_id, name_pcode_nf, surname_pcode, md5sum,
+		(16422, 'Uncle Richard', None, None, 'U5246', 'R263', '76b9b9561e64091e91eb63481c3a76de'),
+
+complete_cast  	id, movie_id, subject_id, status_id,
+		(1, 3282266, 1, 4),
+
+info_type  	id, info,
+		(3, 'genres'), (4, 'languages'), (5, 'certificates'), (6, 'sound mix'),
+
+keyword  	id, keyword, phonetic_code,
+		(194, 'cheat-on-husband', 'C3521')
+
+kind_type  	id, kind,
+		(2, 'tv series'),
+
+link_type  	id, link,
+		(2, 'remake of'),
+
+movie_companies id, movie_id, company_id, company_type_id, note,
+		(1, 2, 1, 1, '(2006) (USA) (TV)'),
+
+movie_info  	id, movie_id, info_type_id, info, note,
+		(1, 4730034, 11, "The version airing o.... advertising reasons.", None),
+
+movie_keyword  	id, movie_id, keyword_id,
+		(1, 2, 1)
+
+movie_link  	id, movie_id, linked_movie_id, link_type_id,
+		(1, 2, 1231141, 6),
+
+name  		id, name, imdb_index, imdb_id, gender, name_pcode_cf, name_pcode_nf, surname_pcode, md5sum,
+		(1856, 'Aatila, Esko', None, None, 'm', 'A342', 'E234', 'A34', 'a6f116aac8faa555df70b3861fd26714'),
+ 
+person_info  	id, person_id, info_type_id, info, note,
+		(1, 6346236, 19, 'Richard Matthew Clark was born ... known.', 'Tesha Dockery "germanpheonix@yahoo.com"'),
+
+role_type  	id, role,
+		(1, 'actor')
+
+title  		id, title, imdb_index, kind_id, production_year, imdb_id, phonetic_code, episode_of_id, season_nr, episode_nr, series_years, 			md5sum,
+		(100005, '"After Hell" (None)', None, 1, None, None, 'A1364', None, None, None, None, '24780c9dc4010553b6fbb686ec0898f7'),
+
+title_top250  	id, title, imdb_index, kind_id, production_year, imdb_id, phonetic_code, episode_of_id, season_nr, episode_nr, series_years, 			md5sum,
+
+
+
+company_type  	id, kind,
+comp_cast_type  id, kind,
