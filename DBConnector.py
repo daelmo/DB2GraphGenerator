@@ -13,7 +13,7 @@ class DBConnector:
         self._closeConnection()
 
     def _createConnection(self):
-        return psycopg2.connect(host="localhost",database="guentherdb", user="demo_user", password="password")
+        return psycopg2.connect(host="localhost",database="sakila", user="demo_user", password="password")
 
     def _closeConnection(self):
         self.connection.close()
