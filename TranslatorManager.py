@@ -30,15 +30,27 @@ class TranslatorManager:
     def translate(self, dbconnector):
         graph = nx.Graph()
 
-        # get list of tables
+        for (table,) in self.tableList:
+            print(table)
+            # get first table
 
-        # get first table
+            table_entries = dbconnector.execute("""SELECT * from """ + table + """ limit 10;""")
+            print(table_entries)
 
-        db_version = dbconnector.execute("""SELECT first_name from actor limit 10;""")
-        print(db_version)
 
-        # first table to nodes
+            for table_entry in table_entries:
+                # first tableids to nodes
+                graph.add_node(table_entry[0])
 
-        [graph.add_node(actor) for (actor,) in db_version]
+                # attributes to nodes
+                graph.add_nodes_from(table_entry[1:])
+
+                # append attributes to id nodes
+
+                for attribute in table_entry[1:]:
+                    graph.add_edge(table_entry[0], attribute)
+                    print(attribute)
+
+            break
 
         return graph
