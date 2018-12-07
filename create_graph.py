@@ -6,7 +6,7 @@ from TranslatorManager import TranslatorManager
 if __name__ == '__main__':
     with DBConnector() as dbconnector:
         translatormanager = TranslatorManager(dbconnector)
-        #db_version = dbconnector.execute("""SELECT * from actor limit 10;""")
+        graph = translatormanager.translate(dbconnector)
 
-
-        #print(db_version)
+        print(graph.nodes())
+        print(graph.number_of_nodes())

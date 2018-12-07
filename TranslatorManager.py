@@ -1,3 +1,5 @@
+import networkx as nx
+
 class TranslatorManager:
     tableList = None
     tableStructures = {}
@@ -24,3 +26,19 @@ class TranslatorManager:
             columnNames = self.dbConnector.execute(sql)
             structures[tableName]= [columnName for (columnName,) in columnNames]
         return structures
+
+    def translate(self, dbconnector):
+        graph = nx.Graph()
+
+        # get list of tables
+
+        # get first table
+
+        db_version = dbconnector.execute("""SELECT first_name from actor limit 10;""")
+        print(db_version)
+
+        # first table to nodes
+
+        [graph.add_node(actor) for (actor,) in db_version]
+
+        return graph
