@@ -5,6 +5,7 @@ class TranslatorManager:
     tableStructures = {}
     relationList = None
     dbConnector = None
+    skip_table_list= ['nicer_but_slower_film_list']
 
     def __init__(self, dbConnector):
         self.dbConnector = dbConnector
@@ -28,29 +29,25 @@ class TranslatorManager:
         return structures
 
     def translate(self, dbconnector):
-        graph = nx.Graph()
+        graph = nx.DiGraph()
 
         for (table,) in self.tableList:
-            print(table)
-            # get first table
-
-            table_entries = dbconnector.execute("""SELECT * from """ + table + """ limit 10;""")
-            print(table_entries)
-
+            if table in self.skip_table_list: continue
+            table_entries = dbconnector.execute("""SELECT * from """ + table +""" limit 10;""")
 
             for table_entry in table_entries:
-                # first tableids to nodes
-                graph.add_node(table_entry[0])
+                node_id = table + '_' + str(table_entry[0])
+                attributes = table_entry[1:]
 
-                # attributes to nodes
-                graph.add_nodes_from(table_entry[1:])
+                graph.add_node(node_id)
+                for attribute in attributes:
+                    if isinstance(attribute, list):
+                        for element in attribute:
+                            graph.add_node(element)
+                            graph.add_edge(node_id, element)
+                        continue
+                    graph.add_node(attribute)
+                    graph.add_edge(node_id, attribute)
 
-                # append attributes to id nodes
-
-                for attribute in table_entry[1:]:
-                    graph.add_edge(table_entry[0], attribute)
-                    print(attribute)
-
-            break
 
         return graph
