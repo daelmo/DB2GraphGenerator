@@ -6,7 +6,7 @@ from TranslatorManager import TranslatorManager
 if __name__ == '__main__':
     with DBConnector() as dbconnector:
         translatormanager = TranslatorManager(dbconnector)
-        graph = translatormanager.translate(dbconnector)
+        graph = translatormanager.translate()
 
         print(graph.nodes())
         print(graph.edges())
