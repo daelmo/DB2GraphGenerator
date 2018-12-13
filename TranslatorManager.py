@@ -13,6 +13,8 @@ class TranslatorManager:
         self.tableList = self._getTableList()
         self.tableStructures = self._getTableStructures()
         self.foreign_key_list = self._getForeignKeys()
+        self.relationList = self._buildRelationList()
+        self.mn_list = self._getMNTables()
         print (self.foreign_key_list)
 
     def _getTableList(self):
@@ -71,3 +73,37 @@ class TranslatorManager:
 
     def _buildRelations(self, graph):
         return graph
+
+    def _buildRelationList(self):
+        sql = '''SELECT 
+        tc.table_name, 
+        kcu.column_name, 
+        ccu.table_name AS foreign_table_name,
+        ccu.column_name AS foreign_column_name 
+        FROM 
+        information_schema.table_constraints AS tc 
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+          AND tc.table_schema = kcu.table_schema
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+          AND ccu.table_schema = tc.table_schema
+        WHERE constraint_type = 'FOREIGN KEY'; '''
+        return self.dbconnector.execute(sql)
+
+    def _getMNTables(self):
+        sql = '''
+        SELECT 
+            a.TABLE_NAME
+        FROM 
+           INFORMATION_SCHEMA.TABLE_CONSTRAINTS A
+        JOin INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE B
+        ON  A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
+        WHERE A.CONSTRAINT_TYPE = 'PRIMARY KEY'
+        GROUP BY a.table_name, b.constraint_name
+        HAVING COUNT(*) > 1
+	        '''
+        return self.dbconnector.execute(sql)
+
+
+
