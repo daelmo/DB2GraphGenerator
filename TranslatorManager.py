@@ -14,7 +14,7 @@ class TranslatorManager:
         self.tableStructures = self._getTableStructures()
         self.foreign_key_list = self._getForeignKeys()
         self.relationList = self._buildRelationList()
-        self.mn_list = self._getMNTables()
+        self.mn_relations_list = self._getMNTables()
         print (self.foreign_key_list)
 
     def _getTableList(self):
@@ -72,6 +72,16 @@ class TranslatorManager:
             return graph
 
     def _buildRelations(self, graph):
+
+        for (table_name, column_name, primary_table, primary_key) in self.relationList:
+            if table_name in self.mn_relations_list: continue
+            table_entries = self.dbconnector.execute('''SELECT *,'''+ column_name +''' from ''' + table_name + ''' limit 10;''')
+            for table_entry in table_entries:
+                start_node_id = table_name + '_' + str(table_entry[0])
+                end_node_id = primary_table + '_' + str(table_entry[-1])
+                graph.add_edge(start_node_id, end_node_id)
+                print(table_entry)
+                print('build relation from' +  start_node_id + ' to ' + end_node_id)
         return graph
 
     def _buildRelationList(self):
