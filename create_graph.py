@@ -1,7 +1,6 @@
 #!/usr/bin/python
-import networkx as nx
 from DBConnector import DBConnector
-from TranslatorManager import TranslatorManager
+from graph_generator.TranslatorManager import TranslatorManager
 
 if __name__ == '__main__':
     with DBConnector() as dbconnector:

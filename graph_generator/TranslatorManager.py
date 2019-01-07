@@ -1,4 +1,5 @@
 import networkx as nx
+import pandas as pd
 
 class TranslatorManager:
     tableList = None
@@ -14,7 +15,6 @@ class TranslatorManager:
         self.tableStructures = self._getTableStructures()
         self.foreign_key_list = self._getForeignKeys()
         self.relationList = self._buildRelationList()
-        self.mn_relations_list = self._getMNTables()
         print (self.foreign_key_list)
 
     def _getTableList(self):
@@ -69,22 +69,19 @@ class TranslatorManager:
                 continue
             graph.add_node(attribute)
             graph.add_edge(node_id, attribute)
-            return graph
+        return graph
 
     def _buildRelations(self, graph):
-
         for (table_name, column_name, primary_table, primary_key) in self.relationList:
-            if table_name in self.mn_relations_list: continue
             table_entries = self.dbconnector.execute('''SELECT *,'''+ column_name +''' from ''' + table_name + ''' limit 10;''')
             for table_entry in table_entries:
                 start_node_id = table_name + '_' + str(table_entry[0])
                 end_node_id = primary_table + '_' + str(table_entry[-1])
                 graph.add_edge(start_node_id, end_node_id)
-                print(table_entry)
-                print('build relation from' +  start_node_id + ' to ' + end_node_id)
         return graph
 
     def _buildRelationList(self):
+        mn_relations = self._getMNTables()
         sql = '''SELECT 
         tc.table_name, 
         kcu.column_name, 
@@ -99,6 +96,15 @@ class TranslatorManager:
           ON ccu.constraint_name = tc.constraint_name
           AND ccu.table_schema = tc.table_schema
         WHERE constraint_type = 'FOREIGN KEY'; '''
+        relations = pd.DataFrame(self.dbconnector.execute(sql))
+        relations.drop(relations.index[1])
+
+        for mn_table in mn_relations:
+            relation = relations.loc[relations[0].isin(mn_table)]
+            relations = relations[relations[0] != mn_table]
+            print(relations)
+
+
         return self.dbconnector.execute(sql)
 
     def _getMNTables(self):
