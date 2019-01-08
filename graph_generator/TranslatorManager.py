@@ -1,5 +1,6 @@
 import networkx as nx
 import pandas as pd
+import numpy as np
 
 class TranslatorManager:
     tableList = None
@@ -14,8 +15,7 @@ class TranslatorManager:
         self.tableList = self._getTableList()
         self.tableStructures = self._getTableStructures()
         self.foreign_key_list = self._getForeignKeys()
-        self.relationList = self._buildRelationList()
-        print (self.foreign_key_list)
+        self.relationList, self.mn_relationList = self._buildRelationLists()
 
     def _getTableList(self):
         sql =   """SELECT table_name 
@@ -51,6 +51,7 @@ class TranslatorManager:
             graph = self._buildNodesFromTable(graph, table_name)
 
         graph = self._buildRelations(graph)
+        graph = self._buildMNRelations(graph)
         return graph
 
     def _buildNodesFromTable(self, graph, table_name):
@@ -72,16 +73,16 @@ class TranslatorManager:
         return graph
 
     def _buildRelations(self, graph):
-        for (table_name, column_name, primary_table, primary_key) in self.relationList:
-            table_entries = self.dbconnector.execute('''SELECT *,'''+ column_name +''' from ''' + table_name + ''' limit 10;''')
+        for index, row in self.relationList.iterrows():
+            table_entries = self.dbconnector.execute('''SELECT *,'''+ row[1] +''' from ''' + row[0] + ''' limit 10;''')
             for table_entry in table_entries:
-                start_node_id = table_name + '_' + str(table_entry[0])
-                end_node_id = primary_table + '_' + str(table_entry[-1])
+                start_node_id = row[0] + '_' + str(table_entry[0])
+                end_node_id = row[2] + '_' + str(table_entry[-1])
                 graph.add_edge(start_node_id, end_node_id)
         return graph
 
-    def _buildRelationList(self):
-        mn_relations = self._getMNTables()
+    def _buildRelationLists(self):
+        mn_relation_list = self._getMNTables()
         sql = '''SELECT 
         tc.table_name, 
         kcu.column_name, 
@@ -97,15 +98,27 @@ class TranslatorManager:
           AND ccu.table_schema = tc.table_schema
         WHERE constraint_type = 'FOREIGN KEY'; '''
         relations = pd.DataFrame(self.dbconnector.execute(sql))
-        relations.drop(relations.index[1])
+        simple_relations = relations[-relations[0].isin(mn_relation_list)]
+        mn_relations = relations[relations[0].isin(mn_relation_list)]
+        print(simple_relations)
+        print(mn_relations)
+        return simple_relations, mn_relations
 
-        for mn_table in mn_relations:
-            relation = relations.loc[relations[0].isin(mn_table)]
-            relations = relations[relations[0] != mn_table]
-            print(relations)
+    def _buildMNRelations(self, graph):
+        df = self.mn_relationList
+        for x in range(0, int(len(df.index)/2)):
+            print(df.iloc[[2*x]])
+            print(df.iloc[[2*x+1]])
+            sql = 'SELECT '+ df.iloc[[2*x]][3].to_string(index=False) + ',' + df.iloc[[2*x+1]][3].to_string(index = False) +\
+                  ' from ' + df.iloc[[2*x]][0].to_string(index=False) + ' limit 10;'
+            table_entries = self.dbconnector.execute(sql)
+            for table_entry in table_entries:
+                start_node_id = df.iloc[[2*x]][2].to_string(index=False) + '_' + str(table_entry[1])
+                end_node_id = df.iloc[[2*x+1]][2].to_string(index = False) + '_' + str(table_entry[1])
+                graph.add_edge(start_node_id, end_node_id)
+                graph.add_edge(end_node_id, start_node_id)
+        return graph
 
-
-        return self.dbconnector.execute(sql)
 
     def _getMNTables(self):
         sql = '''
@@ -119,7 +132,10 @@ class TranslatorManager:
         GROUP BY a.table_name, b.constraint_name
         HAVING COUNT(*) > 1
 	        '''
-        return self.dbconnector.execute(sql)
+        mn = self.dbconnector.execute(sql)
+        result = [x for (x,) in mn ]
+        return result
+
 
 
 

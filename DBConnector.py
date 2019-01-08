@@ -19,7 +19,6 @@ class DBConnector:
         self.connection.close()
 
     def execute(self, sql):
-        print(sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()

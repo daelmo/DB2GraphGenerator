@@ -7,6 +7,4 @@ if __name__ == '__main__':
         translatormanager = TranslatorManager(dbconnector)
         graph = translatormanager.translate()
 
-        print(graph.nodes())
-        print(graph.edges())
-        #print(graph.number_of_nodes())
+        print(graph.number_of_nodes())
