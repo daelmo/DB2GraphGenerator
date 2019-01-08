@@ -1,3 +1,6 @@
+data/raw/
+data/edge_list
+verse/
 .idea/
 .~lock.k_PricesMarkets_v1.xlsx#
 .~lock.test(1).xlsx#
