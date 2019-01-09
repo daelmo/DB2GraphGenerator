@@ -1,5 +1,6 @@
-data/raw/
-data/edge_list
+data/0_raw/
+data/1_edge_list
+data/2_bcsr_file
 verse/
 .idea/
 .~lock.k_PricesMarkets_v1.xlsx#
