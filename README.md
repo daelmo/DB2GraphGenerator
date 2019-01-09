@@ -1,0 +1,1 @@
+python convert.py ../../data/1_edge_list/graph.edgelist ../../data/2_bcsr_file/graph.bcsr --format edgelist --directed 
