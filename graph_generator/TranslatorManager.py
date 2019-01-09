@@ -8,7 +8,7 @@ class TranslatorManager:
     relationList = None
     dbconnector = None
     foreign_key_list = []
-    skip_table_list= ['nicer_but_slower_film_list']
+    skip_table_list= ['nicer_but_slower_film_list', 'sales_by_film_category', 'sales_by_store']
 
     def __init__(self, dbConnector):
         self.dbconnector = dbConnector
@@ -55,26 +55,33 @@ class TranslatorManager:
         return graph
 
     def _buildNodesFromTable(self, graph, table_name):
-        table_entries = self.dbconnector.execute("""SELECT * from """ + table_name + """ limit 10;""")
-        for table_entry in table_entries:
-            node_id = table_name + '_' + str(table_entry[0])
-            attributes = table_entry[1:]
+        table_entries = self.dbconnector.execute("""SELECT * from """ + table_name + ';')
+        attribute_ids = {}
+        i = 0
 
-            graph.add_node(node_id)
+        for table_row in table_entries:
+            row_id = table_name + '_' + str(table_row[0])
+            attributes = table_row[1:]
+
+            graph.add_node(row_id)
+
             for attribute in attributes:
                 if (attribute,) in self.foreign_key_list: continue
-            if isinstance(attribute, list):
-                for element in attribute:
-                    graph.add_node(element)
-                    graph.add_edge(node_id, element)
-                continue
-            graph.add_node(attribute)
-            graph.add_edge(node_id, attribute)
+
+                if attribute not in attribute_ids.values():
+                    attribute_ids['attribute_' + str(i)] = attribute
+                    attribute_id = 'attribute_' + str(i)
+                    i += 1
+                else:
+                    attribute_id = list(attribute_ids.keys())[list(attribute_ids.values()).index(attribute)]
+
+                graph.add_node(attribute_id)
+                graph.add_edge(row_id, attribute_id)
         return graph
 
     def _buildRelations(self, graph):
         for index, row in self.relationList.iterrows():
-            table_entries = self.dbconnector.execute('''SELECT *,'''+ row[1] +''' from ''' + row[0] + ''' limit 10;''')
+            table_entries = self.dbconnector.execute('''SELECT *,'''+ row[1] +''' from ''' + row[0] + '; ')
             for table_entry in table_entries:
                 start_node_id = row[0] + '_' + str(table_entry[0])
                 end_node_id = row[2] + '_' + str(table_entry[-1])
@@ -107,14 +114,12 @@ class TranslatorManager:
     def _buildMNRelations(self, graph):
         df = self.mn_relationList
         for x in range(0, int(len(df.index)/2)):
-            print(df.iloc[[2*x]])
-            print(df.iloc[[2*x+1]])
             sql = 'SELECT '+ df.iloc[[2*x]][3].to_string(index=False) + ',' + df.iloc[[2*x+1]][3].to_string(index = False) +\
-                  ' from ' + df.iloc[[2*x]][0].to_string(index=False) + ' limit 10;'
+                  ' from ' + df.iloc[[2*x]][0].to_string(index=False) + ';'
             table_entries = self.dbconnector.execute(sql)
-            for table_entry in table_entries:
-                start_node_id = df.iloc[[2*x]][2].to_string(index=False) + '_' + str(table_entry[1])
-                end_node_id = df.iloc[[2*x+1]][2].to_string(index = False) + '_' + str(table_entry[1])
+            for from_table, to_table in table_entries:
+                start_node_id = df.iloc[[2*x]][2].to_string(index=False) + '_' + str(from_table)
+                end_node_id = df.iloc[[2*x+1]][2].to_string(index = False) + '_' + str(to_table)
                 graph.add_edge(start_node_id, end_node_id)
                 graph.add_edge(end_node_id, start_node_id)
         return graph
@@ -130,7 +135,7 @@ class TranslatorManager:
         ON  A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
         WHERE A.CONSTRAINT_TYPE = 'PRIMARY KEY'
         GROUP BY a.table_name, b.constraint_name
-        HAVING COUNT(*) > 1
+        HAVING COUNT(*) > 1;
 	        '''
         mn = self.dbconnector.execute(sql)
         result = [x for (x,) in mn ]

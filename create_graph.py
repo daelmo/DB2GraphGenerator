@@ -7,6 +7,6 @@ if __name__ == '__main__':
     with DBConnector() as dbconnector:
         translatormanager = TranslatorManager(dbconnector)
         graph = translatormanager.translate()
-        nx.write_edgelist(graph, 'data/1_edge_list/graph.edgelist')
+        nx.write_edgelist(graph, 'data/1_edge_list/graph.edgelist', data=False)
 
         print(graph.number_of_nodes())
