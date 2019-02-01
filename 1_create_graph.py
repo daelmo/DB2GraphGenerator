@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from DBConnector import DBConnector
+from src.DBConnector import DBConnector
 from graph_generator.TranslatorManager import TranslatorManager
 import networkx as nx
 
