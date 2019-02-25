@@ -12,10 +12,10 @@ if __name__ == '__main__':
     graphSimilarityCalculator = Graph_Similarity_Calculator()
     vectorSimilarityCalculator = Vector_Similarity_Calculator()
 
-    #print(graphSimilarityCalculator.calc_PPageRank())
+    movie_name = 'movies_1'
 
-    print(graphSimilarityCalculator.calc_AdjacencySimilarity('movies_1'))
-    print(graphSimilarityCalculator.calc_PPageRankSimilarity('movies_2'))
-    print(vectorSimilarityCalculator.calc_PPageRankSimilarity(id1))
-    print(vectorSimilarityCalculator.calc_AdjacencySimilarity(id1))
+    #print(graphSimilarityCalculator.calc_AdjacencySimilarity(movie_name))
+    #print(graphSimilarityCalculator.calc_PPageRankSimilarity(movie_name))
+    print(vectorSimilarityCalculator.calc_PPageRankSimilarity(movie_name))
+    print(vectorSimilarityCalculator.calc_AdjacencySimilarity(movie_name))
 
