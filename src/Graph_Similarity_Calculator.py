@@ -15,7 +15,7 @@ class Graph_Similarity_Calculator:
 
     def calc_AdjacencySimilarity(self, node1):
         all_nodes = np.array(self.graph.nodes)
-        all_nodes = np.delete(all_nodes, node1)
+        all_nodes = np.delete(all_nodes, np.where(all_nodes==node1))
         outgoing_edges = self.graph.out_edges(node1)
         similarity = [ 1/len(outgoing_edges) if (node1, node) in self.graph.in_edges(node) else 0 for node in all_nodes]
         sortindex = np.argsort(similarity)
