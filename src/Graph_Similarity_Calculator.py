@@ -11,13 +11,15 @@ class Graph_Similarity_Calculator:
         rank_dict = {key: abs(rank_dict[key] - rank_dict.get(node1, 0)) for key in rank_dict.keys()}
         sorted_by_value = sorted(rank_dict.items(), key=lambda kv: kv[1])
         movie_index = [x[0] for x in sorted_by_value]
+        print(len(movie_index))
         return movie_index
 
     def calc_AdjacencySimilarity(self, node1):
         all_nodes = np.array(self.graph.nodes)
-        all_nodes = np.delete(all_nodes, np.where(all_nodes==node1))
         outgoing_edges = self.graph.out_edges(node1)
         similarity = [ 1/len(outgoing_edges) if (node1, node) in self.graph.in_edges(node) else 0 for node in all_nodes]
         sortindex = np.argsort(similarity)
-        return list(all_nodes[-sortindex])
+        movie_index = list(all_nodes[-sortindex])
+        print(len(movie_index))
+        return movie_index
 

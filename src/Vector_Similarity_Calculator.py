@@ -20,19 +20,20 @@ class Vector_Similarity_Calculator:
         diff_values = abs(dot_values - dot_values[movie_id])
         rank_values = diff_values.sort_values()
         movie_index = rank_values.index.values
+        print(len(self.nodes))
+        print(len(movie_index))
         movie_names = [self.nodes[x] for x in movie_index]
         return movie_names
 
     def calc_AdjacencySimilarity(self, movie_name):
-        print(len(self.nodes))
-        print(movie_name)
         movie_id = self.get_movieid_index(movie_name)
         dot_values = self.ASvectors[movie_id].dot(self.ASvectors)
         diff_values = abs(dot_values - dot_values[movie_id])
         rank_values = diff_values.sort_values()
         movie_index = rank_values.index.values
-        print(self.nodes)
-        movie_names = [print(x) and self.nodes[x] for x in movie_index]
+        print(len(self.nodes))
+        print(len(movie_index))
+        movie_names = [self.nodes[x] for x in movie_index]
         return movie_names
 
 
