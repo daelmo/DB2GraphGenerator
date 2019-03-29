@@ -6,8 +6,8 @@ def read_vector_file():
     return 0
 
 path = 'data/4_filmlists/'
-version = '1'
-movie_name = 'movies_1'
+version = '3'
+movie_name = 'movies_4'
 
 
 if __name__ == '__main__':

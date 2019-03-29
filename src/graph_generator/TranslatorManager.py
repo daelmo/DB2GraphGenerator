@@ -1,6 +1,7 @@
 import networkx as nx
 import pandas as pd
 import numpy as np
+import re
 
 class TranslatorManager:
     tableList = None
@@ -69,6 +70,10 @@ class TranslatorManager:
             graph.add_node(row_id)
 
             for attribute in attributes:
+                print(type(attribute))
+                if re.match("\d\d\d\d", str(attribute)) is not None:
+                    attribute = int(str(attribute)[:3])
+
                 if (attribute,) in self.foreign_key_list: continue
 
                 if attribute not in attribute_ids.values():

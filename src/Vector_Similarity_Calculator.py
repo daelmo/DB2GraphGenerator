@@ -5,11 +5,14 @@ import networkx as nx
 class Vector_Similarity_Calculator:
 
     def __init__(self):
-        temp = np.fromfile('data/3_vectors/kaggle.bin', dtype=np.dtype(np.float32))
-        self.PPRvectors = pd.DataFrame(np.split(temp, 128))
+        temp = np.fromfile('data/3_vectors/kaggle2_ppr.bin', dtype=np.dtype(np.float32))
+        temp = temp.reshape((int(len(temp)/128), 128))
+        self.PPRvectors = pd.DataFrame(temp).T
 
-        temp = np.fromfile('data/3_vectors/kaggle_neigh.bin', dtype=np.dtype(np.float32))
-        self.ASvectors = pd.DataFrame(np.split(temp, 128))
+
+        temp = np.fromfile('data/3_vectors/kaggle2_neigh.bin', dtype=np.dtype(np.float32))
+        temp = temp.reshape((int(len(temp)/128), 128))
+        self.ASvectors = pd.DataFrame(temp).T
 
         self.graph = nx.read_edgelist('data/1_edge_list/kaggle.edgelist')
         self.nodes = list(self.graph.nodes)
