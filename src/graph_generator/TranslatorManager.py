@@ -2,6 +2,7 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 import re
+import _pickle as pickle
 
 class TranslatorManager:
     tableList = None
@@ -53,38 +54,47 @@ class TranslatorManager:
             graph = self._buildNodesFromTableAttributes(graph, table_name)
 
         graph = self._buildRelations(graph)
-        graph = self._buildMNRelations(graph)
+        #graph = self._buildMNRelations(graph)
         return graph
+
+    def _writeAttributesToFile(self, attribute_ids):
+        with open('attributes_dict.txt', 'wb') as file:
+            file.write(pickle.dumps(attribute_ids))
+
 
     def _buildNodesFromTableAttributes(self, graph, table_name):
         if table_name == 'movies_genres':
             return graph
-        table_entries = self.dbconnector.execute("""SELECT * from """ + self.schema_name + '.' + table_name + ';')
+        table_entries = self.dbconnector.execute('SELECT * from ' + self.schema_name + '.' + table_name + ' ;')
         attribute_ids = {}
         i = 0
 
         for table_row in table_entries:
-            row_id = table_name + '_' + str(table_row[0])
-            attributes = table_row[1:]
-
+            if table_name == 'directors':
+                row_id = 100000000 + table_row[0]
+            elif table_name == 'movies':
+                row_id = 200000000 + table_row[0]
+            elif table_name == 'genres':
+                row_id = 300000000 + table_row[0]
             graph.add_node(row_id)
 
+            attributes = table_row[1:]
             for attribute in attributes:
-                print(type(attribute))
                 if re.match("\d\d\d\d", str(attribute)) is not None:
                     attribute = int(str(attribute)[:3])
 
                 if (attribute,) in self.foreign_key_list: continue
 
-                if attribute not in attribute_ids.values():
-                    attribute_ids['attribute_' + str(i)] = attribute
-                    attribute_id = 'attribute_' + str(i)
+                if (attribute,) not in attribute_ids.values():
+                    attribute_ids[500000000 + i] = attribute
+                    attribute_id = 500000000 + i
                     i += 1
                 else:
                     attribute_id = list(attribute_ids.keys())[list(attribute_ids.values()).index(attribute)]
 
                 graph.add_node(attribute_id)
                 graph.add_edge(row_id, attribute_id)
+        self._writeAttributesToFile(attribute_ids)
         return graph
 
     def _buildMNRelations(self, graph):
@@ -95,8 +105,24 @@ class TranslatorManager:
                   ' from public.' + df.iloc[[2 * x]][0].to_string(index=False) + ';'
             table_entries = self.dbconnector.execute(sql)
             for from_table, to_table in table_entries:
-                start_node_id = df.iloc[[2 * x]][2].to_string(index=False) + '_' + str(from_table)
-                end_node_id = df.iloc[[2 * x + 1]][2].to_string(index=False) + '_' + str(to_table)
+                if df.iloc[[2 * x]][2].to_string(index=False) == 'directors':
+                    start_node_id = 100000000 + int(from_table)
+                elif df.iloc[[2 * x]][2].to_string(index=False) == 'movies':
+                    start_node_id = 200000000 + int(from_table)
+                elif df.iloc[[2 * x]][2].to_string(index=False) == 'genres':
+                    start_node_id = 300000000 + int(from_table)
+                else:
+                    print('blah')
+
+                if df.iloc[[2 * x + 1]][2].to_string(index=False) == 'directors':
+                    end_node_id = 100000000 + int(to_table)
+                elif df.iloc[[2 * x + 1]][2].to_string(index=False) == 'movies':
+                    end_node_id = 200000000 + int(to_table)
+                elif df.iloc[[2 * x + 1]][2].to_string(index=False) == 'genres':
+                    end_node_id = 300000000 + int(to_table)
+                else:
+                    print('bluh')
+
                 graph.add_edge(start_node_id, end_node_id)
                 graph.add_edge(end_node_id, start_node_id)
         return graph
@@ -119,10 +145,29 @@ class TranslatorManager:
 
     def _buildRelations(self, graph):
         for index, row in self.relationList.iterrows():
-            table_entries = self.dbconnector.execute('''SELECT *,'''+ row[1] +''' from ''' + self.schema_name + '.' + row[0] + '; ')
+            table_entries = self.dbconnector.execute('''SELECT *,'''+ row[1] +''' from ''' + self.schema_name + '.' + row[0] + ' ; ')
             for table_entry in table_entries:
-                start_node_id = row[0] + '_' + str(table_entry[0])
-                end_node_id = row[2] + '_' + str(table_entry[-1])
+                if row[0] == 'directors':
+                    start_node_id = 100000000 + int(table_entry[0])
+                elif row[0] == 'movies':
+                    start_node_id = 200000000 + int(table_entry[0])
+                elif row[0] == 'genres':
+                    start_node_id = 300000000 + int(table_entry[0])
+                else:
+                    print('blah')
+
+                print(type(table_entry[-1]))
+                if type(table_entry[-1]) is type(None):
+                    continue
+                elif row[2] == 'directors':
+                    end_node_id = 100000000 + int(table_entry[-1])
+                elif row[2] == 'movies':
+                    end_node_id = 200000000 + int(table_entry[-1])
+                elif row[2] == 'genres':
+                    end_node_id = 300000000 + int(table_entry[-1])
+                else:
+                    print('bluh')
+
                 graph.add_edge(start_node_id, end_node_id)
         return graph
 
