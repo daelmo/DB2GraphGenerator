@@ -13,18 +13,21 @@ def _load_ranks():
     adjacencyGraphFile = open(path + version + '_graphAdjacency_' + movie_name, 'r')
     ppagerankGraphFile = open(path + version + '_graphPPageRank_' + movie_name, 'r')
     ppagerankVectorFile = open(path + version + '_vectorPPageRank_' + movie_name, 'r')
+    simrankVectorFile = open(path + version + '_vectorSimRank_' + movie_name, 'r')
 
     adjacencyGraphArray = adjacencyGraphFile.read().split('\n')
-    adjacencyVectorArray = adjacencyVectorFile.read().split('\n')
+    adjacencyVectorArray =  adjacencyVectorFile.read().split('\n')
     ppagerankGraphArray = ppagerankGraphFile.read().split('\n')
     ppagerankVectorArray = ppagerankVectorFile.read().split('\n')
+    simrankVectorArray = simrankVectorFile.read().split('\n')
 
     adjacencyGraphArray = list(filter(None, adjacencyGraphArray))
     adjacencyVectorArray = list(filter(None, adjacencyVectorArray))
     ppagerankVectorArray = list(filter(None, ppagerankVectorArray))
     ppagerankGraphArray = list(filter(None, ppagerankGraphArray))
+    simrankVectorArray = list(filter(None, simrankVectorArray))
 
-    return adjacencyGraphArray, adjacencyVectorArray, ppagerankVectorArray, ppagerankGraphArray
+    return adjacencyGraphArray, adjacencyVectorArray, ppagerankVectorArray, ppagerankGraphArray, simrankVectorArray
 
 
 def _get_names_for(dbconnector, movie_array):
@@ -62,9 +65,7 @@ def _get_movie_ranks(list, ids):
 
 
 if __name__ == '__main__':
-    adjacencyGraphArray, adjacencyVectorArray, ppagerankVectorArray, ppagerankGraphArray = _load_ranks()
-
-    print(len(adjacencyGraphArray))
+    adjacencyGraphArray, adjacencyVectorArray, ppagerankVectorArray, ppagerankGraphArray, simrankVectorArray = _load_ranks()
 
     with (open('attributes_dict.txt', "rb")) as openfile:
         attribute_dict = pickle.load(openfile)
@@ -79,7 +80,8 @@ if __name__ == '__main__':
             print(_get_names_for(dbconnector, adjacencyVectorArray[:15]))
             print('--------pprVect--------')
             print(_get_names_for(dbconnector, ppagerankVectorArray[:15]))
-            print('----------------')
+            print('--------simrankVector--------')
+            print(_get_names_for(dbconnector, simrankVectorArray[:15]))
             print('----------------')
 
     print('\n \n \n Star Wars')
@@ -98,6 +100,9 @@ if __name__ == '__main__':
     print('--------adjGraph--------')
     print(_get_movie_ranks(adjacencyGraphArray, movie_ids))
     print(_get_movie_ranks(adjacencyGraphArray, similars))
+    print('--------simRankGraph--------')
+    print(_get_movie_ranks(simrankVectorArray, movie_ids))
+    print(_get_movie_ranks(simrankVectorArray, similars))
 
 
 

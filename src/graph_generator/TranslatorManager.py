@@ -85,8 +85,8 @@ class TranslatorManager:
 
                 if (attribute,) in self.foreign_key_list: continue
 
-                if (attribute,) not in attribute_ids.values():
-                    attribute_ids[500000000 + i] = attribute
+                if (str(attribute),) not in attribute_ids.values():
+                    attribute_ids[500000000 + i] = str(attribute)
                     attribute_id = 500000000 + i
                     i += 1
                 else:

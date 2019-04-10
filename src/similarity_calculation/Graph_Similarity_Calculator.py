@@ -5,6 +5,8 @@ class Graph_Similarity_Calculator:
 
     def __init__(self):
         self.graph = nx.read_edgelist('data/1_edge_list/kaggle_numbers.edgelist', create_using=nx.DiGraph)
+        print(len(self.graph.nodes))
+        print(len(self.graph.edges))
 
     def calc_PPageRankSimilarity(self, node1):
         rank_dict = nx.pagerank(self.graph, alpha=0.85, personalization={node1: 1})
