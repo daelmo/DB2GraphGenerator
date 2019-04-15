@@ -4,7 +4,7 @@ import numpy as np
 class Graph_Similarity_Calculator:
 
     def __init__(self):
-        self.graph = nx.read_edgelist('data/1_edge_list/kaggle_numbers.edgelist', create_using=nx.DiGraph)
+        self.graph = nx.read_edgelist('data/1_edge_list/kaggle_numbers_bidi.edgelist', create_using=nx.DiGraph)
         print(len(self.graph.nodes))
         print(len(self.graph.edges))
 

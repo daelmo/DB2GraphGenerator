@@ -6,7 +6,7 @@ from scipy import stats
 
 movie_name = '200000004'
 path = 'data/4_filmlists/'
-version = '4'
+version = '5'
 
 
 def calcSpearman(rank_list1, rank_list2, sorted_list):

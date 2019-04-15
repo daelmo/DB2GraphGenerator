@@ -6,7 +6,7 @@ from src.DBConnector import DBConnector
 
 movie_name = '200000004'
 path = 'data/4_filmlists/'
-version = '4'
+version = '5'
 
 def _load_ranks():
     adjacencyVectorFile = open(path + version + '_vectorAdjacency_' + movie_name, 'r')
@@ -73,15 +73,15 @@ if __name__ == '__main__':
 
         with DBConnector() as dbconnector:
             print('-------pprGraph---------')
-            print(_get_names_for(dbconnector, ppagerankGraphArray[:15]))
+            print(_get_names_for(dbconnector, ppagerankGraphArray[:25]))
             print('--------adjGraph--------')
-            print(_get_names_for(dbconnector, adjacencyGraphArray[:15]))
+            print(_get_names_for(dbconnector, adjacencyGraphArray[:125]))
             print('---------adjVect-------')
-            print(_get_names_for(dbconnector, adjacencyVectorArray[:15]))
+            print(_get_names_for(dbconnector, adjacencyVectorArray[:25]))
             print('--------pprVect--------')
-            print(_get_names_for(dbconnector, ppagerankVectorArray[:15]))
+            print(_get_names_for(dbconnector, ppagerankVectorArray[:25]))
             print('--------simrankVector--------')
-            print(_get_names_for(dbconnector, simrankVectorArray[:15]))
+            print(_get_names_for(dbconnector, simrankVectorArray[:25]))
             print('----------------')
 
     print('\n \n \n Star Wars')

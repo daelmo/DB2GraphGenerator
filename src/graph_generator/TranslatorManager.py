@@ -169,6 +169,7 @@ class TranslatorManager:
                     print('bluh')
 
                 graph.add_edge(start_node_id, end_node_id)
+                graph.add_edge(end_node_id, start_node_id)
         return graph
 
     def _getRelationLists(self):
